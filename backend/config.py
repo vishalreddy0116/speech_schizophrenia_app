@@ -21,5 +21,5 @@ VQVAE_EMBEDDING_DIM = 128
 VQVAE_INPUT_DIM = 4
 
 # Server Settings
-HOST = "127.0.0.1"
-PORT = 8000
+HOST = "0.0.0.0"
+PORT = int(os.getenv("PORT", 8000))

@@ -12,7 +12,12 @@ if __name__ == "__main__":
     logger.info(f"Access the Clinical Dashboard at: http://{HOST}:{PORT}/")
     
     try:
-        uvicorn.run("backend.main:app", host=HOST, port=PORT, reload=True)
+        uvicorn.run(
+    "backend.main:app",
+    host=HOST,
+    port=PORT,
+    reload=False
+)
     except KeyboardInterrupt:
         logger.info("Server terminated by user request.")
     except Exception as e:
