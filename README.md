@@ -1,3 +1,11 @@
+---
+title: Speech Schizophrenia App
+emoji: 🧠
+colorFrom: blue
+colorTo: purple
+sdk: docker
+app_port: 8000
+---
 # Speech-Based Schizophrenia Severity Estimation System Dashboard
 
 A full-stack diagnostic evaluation application implementing the multi-branch VQ-VAE + SDVAE + WavLM Attention-Based Feature Fusion model architecture. This tool allows clinicians or researchers to upload speech recordings or record audio live, execute each step of the processing pipeline, and evaluate severity metrics directly from an interactive web panel.
