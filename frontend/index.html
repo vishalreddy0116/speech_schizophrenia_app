@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speech Schizophrenia Severity Estimation System</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- CSS -->
+    <link rel="stylesheet" href="styles.css">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- WaveSurfer.js CDN -->
+    <script src="https://unpkg.com/wavesurfer.js"></script>
+</head>
+<body>
+    <div class="glow-bg"></div>
+    <div class="app-container">
+        <!-- HEADER -->
+        <header class="main-header">
+            <div class="header-title-container">
+                <i class="fa-solid fa-brain-circuit header-icon"></i>
+                <div>
+                    <h1>Speech-Based Schizophrenia Severity Estimation</h1>
+                    <p class="subtitle">Multi-Branch VQ-VAE + SDVAE + WavLM Fusion System Architecture</p>
+                </div>
+            </div>
+            <div class="db-status-badge" id="dbStatus">
+                <i class="fa-solid fa-database"></i> <span id="dbName">Connecting...</span>
+            </div>
+        </header>
+
+        <!-- MAIN LAYOUT -->
+        <main class="dashboard-grid">
+            
+            <!-- PANEL 1: AUDIO INPUT & CONTROLS -->
+            <section class="panel glass-panel" id="inputPanel">
+                <div class="panel-header">
+                    <i class="fa-solid fa-microphone-lines"></i>
+                    <h2>Speech Input Controls</h2>
+                </div>
+                <div class="panel-content">
+                    <div class="input-group">
+                        <label for="patientId"><i class="fa-solid fa-id-card"></i> Patient Identifier (Anonymised)</label>
+                        <input type="text" id="patientId" value="PATIENT-508" placeholder="Enter anonymised ID">
+                    </div>
+
+                    <!-- Audio Options -->
+                    <div class="audio-tabs">
+                        <button class="tab-btn active" id="tabUpload"><i class="fa-solid fa-cloud-arrow-up"></i> Upload WAV</button>
+                        <button class="tab-btn" id="tabRecord"><i class="fa-solid fa-microphone"></i> Live Record</button>
+                    </div>
+
+                    <!-- Upload tab area -->
+                    <div class="tab-content active" id="uploadArea">
+                        <div class="drop-zone" id="dropZone">
+                            <i class="fa-solid fa-file-audio drop-icon"></i>
+                            <p>Drag & drop speech record (.wav) or click to browse</p>
+                            <input type="file" id="audioFileInput" accept=".wav" style="display:none">
+                            <span class="file-name-label" id="fileNameLabel">No file selected</span>
+                        </div>
+                    </div>
+
+                    <!-- Record tab area -->
+                    <div class="tab-content" id="recordArea">
+                        <div class="recorder-container">
+                            <div class="record-pulse-circle" id="recordPulse">
+                                <i class="fa-solid fa-microphone-lines"></i>
+                            </div>
+                            <div class="timer" id="recordTimer">00:00</div>
+                            <div class="record-buttons">
+                                <button class="btn btn-record" id="btnStartRecord"><i class="fa-solid fa-play"></i> Record</button>
+                                <button class="btn btn-stop" id="btnStopRecord" disabled><i class="fa-solid fa-stop"></i> Stop</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Waveform Visualizer -->
+                    <div class="visualizer-container" id="visualizerContainer">
+                        <div id="waveform"></div>
+                    </div>
+
+                    <!-- Main Action Buttons -->
+                    <div class="actions-container">
+                        <button class="btn btn-primary btn-full" id="btnRunFullPipeline" disabled>
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> Execute Full Pipeline
+                        </button>
+                        <button class="btn btn-secondary btn-full" id="btnRunStepByStep" disabled>
+                            <i class="fa-solid fa-forward-step"></i> Run Step-by-Step
+                        </button>
+                        <button class="btn btn-secondary btn-full" id="btnReset" style="display:none">
+                            <i class="fa-solid fa-rotate-left"></i> Reset System State
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PANEL 2: ARCHITECTURE PROCESS PIPELINE -->
+            <section class="panel glass-panel" id="pipelinePanel">
+                <div class="panel-header">
+                    <i class="fa-solid fa-network-wired"></i>
+                    <h2>Architecture Pipeline State</h2>
+                </div>
+                <div class="panel-content">
+                    <div class="pipeline-steps">
+                        
+                        <!-- Step 1: Storage & Raw Upload -->
+                        <div class="step-card" id="stepUpload" data-step="1">
+                            <div class="step-status"><i class="fa-solid fa-circle-notch"></i></div>
+                            <div class="step-details">
+                                <h3>Data Storage & Management</h3>
+                                <p>Register patient & file metadata in MongoDB</p>
+                            </div>
+                        </div>
+
+                        <!-- Step 2: Preprocessing -->
+                        <div class="step-card" id="stepPreprocess" data-step="2">
+                            <div class="step-status"><i class="fa-solid fa-circle-notch"></i></div>
+                            <div class="step-details">
+                                <h3>Preprocessing & Segmentation</h3>
+                                <p>Normalize, pre-emphasis, 3s fixed-length chunks</p>
+                            </div>
+                        </div>
+
+                        <!-- Step 3: Feature Extraction -->
+                        <div class="step-card" id="stepExtract" data-step="3">
+                            <div class="step-status"><i class="fa-solid fa-circle-notch"></i></div>
+                            <div class="step-details">
+                                <h3>Preprocessing & Feature Extraction</h3>
+                                <p>4D Articulatory Feature Vector + Base SSI</p>
+                            </div>
+                        </div>
+
+                        <!-- Step 4: Latent representations -->
+                        <div class="step-card" id="stepLatent" data-step="4">
+                            <div class="step-status"><i class="fa-solid fa-circle-notch"></i></div>
+                            <div class="step-details">
+                                <h3>Latent Speech Learning</h3>
+                                <p>VQ-VAE (128D) + SDVAE (128D) + WavLM (768D)</p>
+                            </div>
+                        </div>
+
+                        <!-- Step 5: Feature Fusion -->
+                        <div class="step-card" id="stepFuse" data-step="5">
+                            <div class="step-status"><i class="fa-solid fa-circle-notch"></i></div>
+                            <div class="step-details">
+                                <h3>Attention-Based Feature Fusion</h3>
+                                <p>Multi-Head Attention mechanism over representations</p>
+                            </div>
+                        </div>
+
+                        <!-- Step 6: Regression Head -->
+                        <div class="step-card" id="stepPredict" data-step="6">
+                            <div class="step-status"><i class="fa-solid fa-circle-notch"></i></div>
+                            <div class="step-details">
+                                <h3>MLP Regression & Output</h3>
+                                <p>Continuous Severity Score & Clinical evaluation metrics</p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Diagnostic Console -->
+                    <div class="terminal-logs">
+                        <div class="terminal-header">
+                            <span><i class="fa-solid fa-terminal"></i> Diagnostic Logs</span>
+                            <span class="pulse-indicator"></span>
+                        </div>
+                        <div class="terminal-content" id="terminalLogs">
+                            <div class="log-line">System initialized. Awaiting audio speech recording...</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PANEL 3: CLINICAL SEVERITY ASSESSMENT RESULTS -->
+            <section class="panel glass-panel" id="resultsPanel">
+                <div class="panel-header">
+                    <i class="fa-solid fa-chart-line"></i>
+                    <h2>Severity Assessment Output</h2>
+                </div>
+                <div class="panel-content results-grid">
+                    
+                    <!-- Primary score display -->
+                    <div class="score-display">
+                        <div class="gauge-container">
+                            <div class="gauge-value" id="ssiValue">0.00</div>
+                            <div class="gauge-label">Speech Severity Index (SSI)</div>
+                        </div>
+                        <div class="panss-container">
+                            <span class="panss-val" id="panssValue">--</span>
+                            <span class="panss-label">PANSS-like Score (30-210)</span>
+                        </div>
+                    </div>
+
+                    <!-- Clinical Classification Info -->
+                    <div class="clinical-box" id="clinicalBox">
+                        <h3>Clinical Category</h3>
+                        <div class="severity-badge" id="severityBadge">Awaiting Input</div>
+                        <p class="severity-desc" id="severityDesc">Submit a voice recording to estimate schizophrenia severity metrics.</p>
+                    </div>
+
+                    <!-- Accuracy stats -->
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <div class="metric-val">0.082</div>
+                            <div class="metric-lbl">MAE</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-val">0.104</div>
+                            <div class="metric-lbl">RMSE</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-val">0.768</div>
+                            <div class="metric-lbl">R² Score</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-val">0.812</div>
+                            <div class="metric-lbl">Pearson r</div>
+                        </div>
+                    </div>
+
+                    <!-- Acoustic Features Radar Chart -->
+                    <div class="chart-container">
+                        <h3>Articulatory Features (4D Vector)</h3>
+                        <canvas id="featuresChart"></canvas>
+                    </div>
+
+                    <!-- Attention Weights Chart -->
+                    <div class="chart-container">
+                        <h3>Multi-Head Attention Distribution</h3>
+                        <canvas id="attentionChart"></canvas>
+                    </div>
+
+                </div>
+            </section>
+
+        </main>
+
+        <!-- FOOTER: HISTORY LIST -->
+        <footer class="history-section glass-panel">
+            <div class="panel-header">
+                <i class="fa-solid fa-clock-rotate-left"></i>
+                <h2>Historical Evaluation Records (MongoDB/Local Cache)</h2>
+            </div>
+            <div class="history-content">
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>Patient ID</th>
+                            <th>Timestamp</th>
+                            <th>Acoustic features</th>
+                            <th>SSI Score</th>
+                            <th>PANSS Score</th>
+                            <th>Severity Category</th>
+                            <th>Logs</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyBody">
+                        <tr>
+                            <td colspan="7" class="empty-table">No history found. Complete an evaluation to view records.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </footer>
+    </div>
+
+    <!-- LOG MODAL -->
+    <div class="modal-backdrop" id="logModal">
+        <div class="modal glass-panel">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-terminal"></i> Complete Processing Logs</h3>
+                <button class="close-btn" id="closeModal">&times;</button>
+            </div>
+            <div class="modal-body" id="modalLogContent">
+                <!-- Logs will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="app.js?v=2"></script>
+</body>
+</html>
