@@ -2,7 +2,7 @@ import uvicorn
 import sys
 import logging
 from backend.config import HOST, PORT
-
+import os
 # Set up logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("Launcher")
@@ -12,10 +12,12 @@ if __name__ == "__main__":
     logger.info(f"Access the Clinical Dashboard at: http://{HOST}:{PORT}/")
     
     try:
+        
+
         uvicorn.run(
     "backend.main:app",
-    host=HOST,
-    port=PORT,
+    host="0.0.0.0",
+    port=int(os.getenv("PORT", 8000)),
     reload=False
 )
     except KeyboardInterrupt:

@@ -218,11 +218,14 @@ class ModelManager:
         # 3. Load WavLM Transformer
         # To avoid blocking, we try to load WavLM. If it fails (e.g. no internet/memory), we catch it.
         try:
-            logger.info("Attempting to load WavLM model from HuggingFace...")
-            self.wavlm_extractor = AutoFeatureExtractor.from_pretrained("microsoft/wavlm-base")
-            self.wavlm = WavLMModel.from_pretrained("microsoft/wavlm-base").to(device)
-            self.wavlm.eval()
-            logger.info("WavLM loaded successfully.")
+            logger.warning("Railway deployment mode - WavLM disabled")
+            self.wavlm = None
+            self.wavlm_extractor = None
+            #logger.info("Attempting to load WavLM model from HuggingFace...")
+            #self.wavlm_extractor = AutoFeatureExtractor.from_pretrained("microsoft/wavlm-base")
+            #self.wavlm = WavLMModel.from_pretrained("microsoft/wavlm-base").to(device)
+            #self.wavlm.eval()
+            #logger.info("WavLM loaded successfully.")
         except Exception as e:
             logger.warning(f"Could not download WavLM transformer: {e}. Will simulate WavLM branch.")
             self.wavlm = None
