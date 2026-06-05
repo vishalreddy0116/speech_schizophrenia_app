@@ -147,9 +147,6 @@ soupsieve==2.8
 soxr==1.1.0
 sqlparse==0.5.5
 stack-data==0.6.3
-standard-aifc==3.13.0
-standard-chunk==3.13.0
-standard-sunau==3.13.0
 starlette==0.50.0
 statsmodels==0.14.6
 sympy==1.14.0
