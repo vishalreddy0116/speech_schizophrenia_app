@@ -18,7 +18,7 @@ def preprocess(y):
         y_norm = y_pre
     return y_norm
 
-def segment_audio(y, sr=16000, sec=3):
+def segment_audio(y, sr=16000, sec=5):
     """Splits audio into fixed-length segments of `sec` seconds, zero-padding the last one."""
     L = sr * sec
     segs = []
